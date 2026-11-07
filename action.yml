@@ -1,0 +1,56 @@
+name: 'AI Code Reviewer'
+description: 'AI-powered code reviewer that automatically reviews PRs with security scanning, best practices, and actionable suggestions'
+author: 'Kamran Ghaffar'
+
+branding:
+  icon: 'eye'
+  color: 'blue'
+
+inputs:
+  openai_api_key:
+    description: 'OpenAI API key for AI-powered reviews'
+    required: true
+  github_token:
+    description: 'GitHub token for PR access (defaults to GITHUB_TOKEN)'
+    required: false
+    default: ${{ github.token }}
+  model:
+    description: 'OpenAI model to use (gpt-4o, gpt-4o-mini, gpt-4-turbo)'
+    required: false
+    default: 'gpt-4o-mini'
+  review_level:
+    description: 'Review depth: quick, standard, thorough'
+    required: false
+    default: 'standard'
+  language:
+    description: 'Comma-separated list of languages to review (auto-detect if empty)'
+    required: false
+    default: ''
+  severity_threshold:
+    description: 'Minimum severity to report: info, warning, error'
+    required: false
+    default: 'info'
+  max_files:
+    description: 'Maximum number of files to review (0 = unlimited)'
+    required: false
+    default: '0'
+  exclude_patterns:
+    description: 'Comma-separated glob patterns to exclude (e.g., "*.md,*.txt,tests/*")'
+    required: false
+    default: ''
+  post_summary:
+    description: 'Post a summary comment with score and recommendations'
+    required: false
+    default: 'true'
+
+outputs:
+  review_score:
+    description: 'Overall code quality score (0-100)'
+  issues_found:
+    description: 'Total number of issues found'
+  critical_issues:
+    description: 'Number of critical/error-level issues'
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'

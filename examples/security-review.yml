@@ -1,0 +1,27 @@
+# AI Code Review — Security-Focused Configuration
+#
+# Only flags critical security issues. Best for large PRs
+# where you want fast, focused feedback.
+
+name: Security Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  security-review:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: AI Security Review
+        uses: kamranghafar/ai-code-reviewer@v1
+        with:
+          openai_api_key: ${{ secrets.OPENAI_API_KEY }}
+          model: 'gpt-4o'
+          review_level: 'quick'
+          severity_threshold: 'error'

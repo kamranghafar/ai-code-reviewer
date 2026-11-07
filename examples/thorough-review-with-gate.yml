@@ -1,0 +1,39 @@
+# AI Code Review — Thorough Review with Quality Gate
+#
+# Deep review with a quality gate that fails the check
+# if critical issues are found.
+
+name: Thorough Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'src/**'
+      - 'lib/**'
+      - 'app/**'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  thorough-review:
+    name: Thorough AI Review
+    runs-on: ubuntu-latest
+    steps:
+      - name: AI Code Review
+        id: review
+        uses: kamranghafar/ai-code-reviewer@v1
+        with:
+          openai_api_key: ${{ secrets.OPENAI_API_KEY }}
+          model: 'gpt-4o'
+          review_level: 'thorough'
+          exclude_patterns: '*.md,*.txt,*.json,tests/*,__tests__/*'
+          post_summary: 'true'
+
+      - name: Quality Gate
+        if: steps.review.outputs.critical_issues > 0
+        run: |
+          echo "::error::AI review found ${{ steps.review.outputs.critical_issues }} critical issues (score: ${{ steps.review.outputs.review_score }}/100)"
+          exit 1
